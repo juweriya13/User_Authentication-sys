@@ -1,26 +1,18 @@
+# Python
 venv/
-
-# Python Cache
 __pycache__/
 *.pyc
 
-# Database
+# Django
 db.sqlite3
+media/
 
-# Environment Variables
+# Node
+auth_frontend/node_modules/
+auth_frontend/dist/
+
+# Environment
 .env
 
 # VS Code
 .vscode/
-
-# PyCharm
-.idea/
-
-# macOS
-.DS_Store
-
-# Django Media
-media/
-
-# Static Files
-staticfiles/
