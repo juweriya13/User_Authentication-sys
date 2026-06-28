@@ -1,0 +1,36 @@
+.dashboard-bg{
+    background:#F4F7FC;
+    min-height:100vh;
+}
+
+.sidebar{
+    width:270px;
+    background:#111827;
+    color:white;
+}
+
+.main-content{
+    flex:1;
+    padding:30px;
+}
+
+.dashboard-card{
+    background:white;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+.blue{
+    color:#2563EB;
+}
+
+.green{
+    color:#10B981;
+}

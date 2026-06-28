@@ -4,12 +4,14 @@ export default function InputField({
   name,
   value,
   onChange,
-  placeholder,
+  placeholder = "",
   required = false,
+  error = "",
 }) {
   return (
-    <div className="mb-4">
-      <label className="block mb-2 font-medium text-gray-700">
+    <div className="w-full">
+      {/* Label */}
+      <label className="block text-sm font-small text-gray-700 mb-1">
         {label}
 
         {required && (
@@ -17,6 +19,7 @@ export default function InputField({
         )}
       </label>
 
+      {/* Input */}
       <input
         type={type}
         name={name}
@@ -24,8 +27,23 @@ export default function InputField({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+        className={`w-full rounded-xl border px-4 py-2.5 text-sm
+        transition duration-200
+        bg-white
+        ${
+          error
+            ? "border-red-400 focus:ring-red-400 focus:border-red-400"
+            : "border-gray-300 focus:ring-pink-500 focus:border-pink-500"
+        }
+        focus:outline-none focus:ring-2`}
       />
+
+      {/* Error */}
+      {error && (
+        <p className="text-xs text-red-500 mt-1">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

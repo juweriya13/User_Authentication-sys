@@ -99,74 +99,186 @@ export default function Register() {
 };
 
   return (
+  <AuthLayout
+    title="Create Account"
+    subtitle="Create your account to continue"
+  >
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5"
+    >
+      {/* First Name & Last Name */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <InputField
+          label="First Name"
+          name="first_name"
+          value={formData.first_name}
+          onChange={handleChange}
+          placeholder="John"
+          required
+          error={errors.first_name}
+        />
 
-    <AuthLayout title="Create Account">
+        <InputField
+          label="Last Name"
+          name="last_name"
+          value={formData.last_name}
+          onChange={handleChange}
+          placeholder="Doe"
+          required
+          error={errors.last_name}
+        />
+      </div>
 
-   <form onSubmit={handleSubmit}>
-        {/* <p className="text-sm text-gray-500 mb-6">Fields marked <span className="text-red-500">*</span> are mandatory.</p> */}
+      {/* Username */}
+      <InputField
+        label="Username"
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+        placeholder="john_doe"
+        required
+        error={errors.username}
+      />
 
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5"> */}
+      {/* Email */}
+      <InputField
+        label="Email"
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        placeholder="john@example.com"
+        required
+        error={errors.email}
+      />
 
-        <InputField label="First Name" name="first_name" value={formData.first_name} onChange={handleChange} required />
-         {errors.first_name && (<p className="text-red-500 text-sm mt-1"> {errors.first_name} </p> )}
+      {/* Phone */}
+      <InputField
+        label="Phone Number"
+        name="phone_number"
+        value={formData.phone_number}
+        onChange={handleChange}
+        placeholder="phone number"
+        required
+        error={errors.phone_number}
+      />
 
-        <InputField label="Last Name" name="last_name" value={formData.last_name} onChange={handleChange} required />
-         {errors.last_name && (<p className="text-red-500 text-sm mt-1"> {errors.last_name} </p> )}
+      {/* DOB + Gender */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
+        <InputField
+          label="Date of Birth"
+          type="date"
+          name="date_of_birth"
+          value={formData.date_of_birth}
+          onChange={handleChange}
+          required
+          error={errors.date_of_birth}
+        />
 
-        <InputField label="Username" name="username" value={formData.username} onChange={handleChange} required />
-         {errors.username && (<p className="text-red-500 text-sm mt-1"> {errors.username} </p> )}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Gender
+            <span className="text-red-500 ml-1">*</span>
+          </label>
 
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-white
+            ${
+              errors.gender
+                ? "border-red-400 focus:ring-red-400"
+                : "border-gray-300 focus:ring-pink-500"
+            }
+            focus:outline-none focus:ring-2`}
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
 
-        <InputField label="Email" type="email" name="email" value={formData.email} onChange={handleChange} required />
-         {errors.email && (<p className=""> {errors.email} </p> )}
-
-
-        <InputField label="Phone Number" name="phone_number" value={formData.phone_number} onChange={handleChange} required />
-         {errors.phone_number && (<p className=""> {errors.phone_number} </p> )}
-
-
-        <InputField label="Date of Birth" type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} required />
-         {errors.date_of_birth && (<p className="text-red-500 text-sm mt-1"> {errors.date_of_birth} </p> )}
-
-
-        <div className="mb-4">
-        <label className="block mb-2 font-medium text-gray-700"> Gender <span className="text-red-500">*</span></label>
-        <select 
-        name="gender" value={formData.gender} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600">
-        <option value="">Select Gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option>
-        </select>
-        {errors.gender && ( <p className="text-red-500 text-sm mt-1">{errors.gender}</p> )}
+          {errors.gender && (
+            <p className="text-xs text-red-500 mt-1">
+              {errors.gender}
+            </p>
+          )}
         </div>
 
-        <InputField label="City" name="city" value={formData.city} onChange={handleChange} />
+      </div>
 
-        <InputField label="State" name="state" value={formData.state} onChange={handleChange} />
+      {/* Address */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-        <InputField label="Country" name="country" value={formData.country} onChange={handleChange} />
+        <InputField
+          label="City"
+          name="city"
+          value={formData.city}
+          onChange={handleChange}
+          placeholder="Nagpur"
+        />
 
-        <InputField label="Password" type="password" name="password" value={formData.password} onChange={handleChange} required />
-         {errors.password && (<p className="text-red-500 text-sm mt-1"> {errors.password} </p> )}
+        <InputField
+          label="State"
+          name="state"
+          value={formData.state}
+          onChange={handleChange}
+          placeholder="Maharashtra"
+        />
 
-        <InputField label="Confirm Password" type="password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} required />
-         {errors.confirm_password && (<p className="text-red-500 text-sm mt-1"> {errors.confirm_password} </p> )}
+        <InputField
+          label="Country"
+          name="country"
+          value={formData.country}
+          onChange={handleChange}
+          placeholder="India"
+        />
 
-        <div className="mt-6"><Button type="submit" text="Create Account"/></div>
+      </div>
 
-      {/* </div> */}
+      {/* Password */}
+      <InputField
+        label="Password"
+        type="password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        placeholder="Minimum 8 characters"
+        required
+        error={errors.password}
+      />
 
+      {/* Confirm Password */}
+      <InputField
+        label="Confirm Password"
+        type="password"
+        name="confirm_password"
+        value={formData.confirm_password}
+        onChange={handleChange}
+        placeholder="Re-enter password"
+        required
+        error={errors.confirm_password}
+      />
+
+      <Button
+        type="submit"
+        text="Create Account"
+      />
     </form>
 
-      <p className="text-center mt-5">
-        Already have an account?{" "}
-        <Link
-          to="/"
-          className="text-pink-600 font-semibold"
-        >
-          Login
-        </Link>
-      </p>
+    <p className="text-center mt-8 text-gray-600 text-sm">
+      Already have an account?{" "}
+      <Link
+        to="/"
+        className="font-semibold text-pink-600 hover:text-pink-700"
+      >
+        Login
+      </Link>
+    </p>
 
-    </AuthLayout>
-  );
+  </AuthLayout>
+);
 }
