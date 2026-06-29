@@ -28,6 +28,14 @@ export default function Register() {
 
       const [errors, setErrors] = useState({});
 
+      // const Input = ({value= '',...props}) => <input value={value} {...props} />;
+
+      // const handleFinish = (values) => {
+      //   if (!values.username || !values.password || !values.email || !values.first_name || !values.last_name) {
+      //     alert('Please fill in the above fields.');
+      //   }
+      // };
+
   function handleChange(e) {
     setFormData({
       ...formData,
@@ -115,7 +123,7 @@ export default function Register() {
           value={formData.first_name}
           onChange={handleChange}
           placeholder="John"
-          required
+          // required
           error={errors.first_name}
         />
 
@@ -125,7 +133,7 @@ export default function Register() {
           value={formData.last_name}
           onChange={handleChange}
           placeholder="Doe"
-          required
+          // required
           error={errors.last_name}
         />
       </div>
@@ -137,7 +145,7 @@ export default function Register() {
         value={formData.username}
         onChange={handleChange}
         placeholder="john_doe"
-        required
+        // required
         error={errors.username}
       />
 
@@ -149,7 +157,7 @@ export default function Register() {
         value={formData.email}
         onChange={handleChange}
         placeholder="john@example.com"
-        required
+        // required
         error={errors.email}
       />
 
@@ -160,7 +168,7 @@ export default function Register() {
         value={formData.phone_number}
         onChange={handleChange}
         placeholder="phone number"
-        required
+        // required
         error={errors.phone_number}
       />
 
@@ -173,7 +181,7 @@ export default function Register() {
           name="date_of_birth"
           value={formData.date_of_birth}
           onChange={handleChange}
-          required
+          // required
           error={errors.date_of_birth}
         />
 
@@ -247,7 +255,7 @@ export default function Register() {
         value={formData.password}
         onChange={handleChange}
         placeholder="Minimum 8 characters"
-        required
+        // required
         error={errors.password}
       />
 
@@ -259,7 +267,7 @@ export default function Register() {
         value={formData.confirm_password}
         onChange={handleChange}
         placeholder="Re-enter password"
-        required
+        // required
         error={errors.confirm_password}
       />
 

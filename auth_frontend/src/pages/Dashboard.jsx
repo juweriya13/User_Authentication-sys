@@ -15,7 +15,7 @@ export default function Dashboard() {
       <div className="space-y-6">
 
         <h1 className="text-4xl font-bold text-gray-800">
-          Welcome To The Dashboard 👋
+          Welcome To The Dashboard!
         </h1>
 
         <p className="text-gray-500">
@@ -24,7 +24,7 @@ export default function Dashboard() {
 
         <button
           onClick={logout}
-          className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl transition"
+          className="bg-blue-300 hover:bg-blue-500 text-black px-6 py-3 rounded-2xl transition"
         >
           Logout
         </button>

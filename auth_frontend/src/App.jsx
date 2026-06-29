@@ -9,6 +9,17 @@ import Contact from "./pages/Contact";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import ChangePassword from "./pages/ChangePassword";
+import React from "react";
+import Form, {Field} from 'rc-field-form';
+
+
+// const Input = ({value= '',...props}) => <input value={value} {...props} />;
+
+// const handleFinish = (values) => {
+//   if (!values.username || !values.password || !values.email || !values.first_name || !values.last_name) {
+//     alert('Please fill in the above fields.');
+//   }
+// };
 
 function App() {
   return (
