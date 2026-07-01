@@ -45,20 +45,29 @@ class RegisterSerializer(serializers.ModelSerializer):
             "password": {"write_only": True}
         }
 
+    # Check if email already exists
+    def validate_email(self, value):
+        if CustomUser.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError(
+                "This email is already registered."
+            )
+        return value
+
+    # Check if username already exists
+    def validate_username(self, value):
+        if CustomUser.objects.filter(username__iexact=value).exists():
+            raise serializers.ValidationError(
+                "This username is already taken."
+            )
+        return value
+
+    # Check password match
     def validate(self, attrs):
         if attrs["password"] != attrs["confirm_password"]:
             raise serializers.ValidationError(
-                {"password": "Passwords do not match."}
-            )
-
-        if CustomUser.objects.filter(email=attrs["email"]).exists():
-            raise serializers.ValidationError(
-                {"email": "Email already exists."}
-            )
-
-        if CustomUser.objects.filter(username=attrs["username"]).exists():
-            raise serializers.ValidationError(
-                {"username": "Username already exists."}
+                {
+                    "confirm_password": "Passwords do not match."
+                }
             )
 
         return attrs

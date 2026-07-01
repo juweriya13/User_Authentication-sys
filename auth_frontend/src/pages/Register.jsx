@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Country, State, City } from "country-state-city";
 
 import api from "../services/api";
 
@@ -11,100 +12,220 @@ export default function Register() {
 
   const navigate = useNavigate();
 
-      const [formData, setFormData] = useState({
-          first_name: "",
-          last_name: "",
-          username: "",
-          email: "",
-          phone_number: "",
-          date_of_birth: "",
-          gender: "",
-          city: "",
-          state: "",
-          country: "",
-          password: "",
-          confirm_password: "",
-      });
+  const [countries] = useState(Country.getAllCountries());
 
-      const [errors, setErrors] = useState({});
+  const [states, setStates] = useState([]);
 
-      // const Input = ({value= '',...props}) => <input value={value} {...props} />;
+  const [cities, setCities] = useState([]);
 
-      // const handleFinish = (values) => {
-      //   if (!values.username || !values.password || !values.email || !values.first_name || !values.last_name) {
-      //     alert('Please fill in the above fields.');
-      //   }
-      // };
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    username: "",
+    email: "",
+    phone_number: "",
+    date_of_birth: "",
+    gender: "",
+    city: "",
+    state: "",
+    country: "",
+    password: "",
+    confirm_password: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const { name, value } = e.target;
+
+  let newValue = value;
+
+  // First Name & Last Name
+  if (name === "first_name" || name === "last_name") {
+    newValue = value.replace(/[^A-Za-z\s]/g, "");
   }
+
+  // Phone Number
+  if (name === "phone_number") {
+    newValue = value.replace(/\D/g, "").slice(0, 10);
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: newValue,
+  }));
+
+  setErrors((prev) => ({
+    ...prev,
+    [name]: "",
+  }));
+
+  if (name === "country") {
+    const selectedStates = State.getStatesOfCountry(value);
+
+    setStates(selectedStates);
+
+    setCities([]);
+
+    setFormData((prev) => ({
+      ...prev,
+      country: value,
+      state: "",
+      city: "",
+    }));
+  }
+
+  if (name === "state") {
+    const selectedCities = City.getCitiesOfState(
+      formData.country,
+      value
+    );
+
+    setCities(selectedCities);
+
+    setFormData((prev) => ({
+      ...prev,
+      state: value,
+      city: "",
+    }));
+  }
+}
 
   const validate = () => {
-  let newErrors = {};
+    const newErrors = {};
 
-  if (!formData.first_name.trim())
-    newErrors.first_name = "First Name is required.";
+    // First Name
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First Name is required.";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.first_name)) {
+      newErrors.first_name =
+        "First Name should contain letters only.";
+    }
 
-  if (!formData.last_name.trim())
-    newErrors.last_name = "Last Name is required.";
+    // Last Name
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last Name is required.";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.last_name)) {
+      newErrors.last_name =
+        "Last Name should contain letters only.";
+    }
 
-  if (!formData.username.trim())
-    newErrors.username = "Username is required.";
+    // Username
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required.";
+    } else if (!/^[A-Za-z][A-Za-z0-9_]{3,11}$/.test(formData.username)) {
+      newErrors.username =
+        "Only letters, numbers and underscore (_) are allowed.";
+    }
 
-  if (!formData.email.trim())
-    newErrors.email = "Email is required.";
-  else if (!/\S+@\S+\.\S+/.test(formData.email))
-    newErrors.email = "Please enter a valid email.";
+    // Email
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
 
-  if (!formData.phone_number.trim())
-    newErrors.phone_number = "Phone Number is required.";
-  else if (!/^\d{10}$/.test(formData.phone_number))
-    newErrors.phone_number = "Please enter a valid 10-digit phone number.";
+    // Phone Number
+    if (!formData.phone_number.trim()) {
+      newErrors.phone_number = "Phone Number is required.";
+    } else if (!/^\d{10}$/.test(formData.phone_number)) {
+      newErrors.phone_number =
+        "Phone Number must contain 10 digits.";
+    }
 
-  if (!formData.date_of_birth)
-    newErrors.date_of_birth = "Date of Birth is required.";
+    // DOB
+    if (!formData.date_of_birth) {
+      newErrors.date_of_birth =
+        "Date of Birth is required.";
+    }
 
-  if (!formData.gender)
-    newErrors.gender = "Please select your gender.";
+    // Gender
+    if (!formData.gender) {
+      newErrors.gender = "Please select your gender.";
+    }
 
-  if (!formData.password)
-    newErrors.password = "Password is required.";
-  else if (formData.password.length < 8)
-    newErrors.password = "Password must be at least 8 characters.";
+    if (!formData.country) {
+    newErrors.country = "Please select a country.";
+}
 
-  if (!formData.confirm_password)
-    newErrors.confirm_password = "Confirm Password is required.";
-  else if (formData.password !== formData.confirm_password)
-    newErrors.confirm_password = "Passwords do not match.";
+    if (!formData.state) {
+        newErrors.state = "Please select a state.";
+    }
 
-  setErrors(newErrors);
+    if (!formData.city) {
+        newErrors.city = "Please select a city.";
+    }
 
-  return Object.keys(newErrors).length === 0;
-};
+    // Password
+    if (!formData.password) {
+      newErrors.password = "Password is required.";
+    } else if (formData.password.length < 8) {
+      newErrors.password =
+        "Password must be at least 8 characters.";
+    }
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+    // Confirm Password
+    if (!formData.confirm_password) {
+      newErrors.confirm_password =
+        "Confirm Password is required.";
+    } else if (
+      formData.password !== formData.confirm_password
+    ) {
+      newErrors.confirm_password =
+        "Passwords do not match.";
+    }
 
-  if (!validate()) return;
+    setErrors(newErrors);
 
-  try {
-    await api.post("register/", formData);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    alert("Registration Successful!");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    navigate("/");
+    setErrors({});
 
-  } catch (error) {
+    if (!validate()) return;
 
-    console.log(error.response?.data);
+    try {
+      setLoading(true);
 
-    setErrors(error.response?.data || {});
-  }
-};
+      await api.post("register/", formData);
+
+      alert("Registration Successful!");
+
+      navigate("/");
+
+    } catch (error) {
+
+      console.log(error.response?.data);
+
+      const backendErrors = {};
+
+      if (error.response?.data) {
+
+        Object.keys(error.response.data).forEach((key) => {
+
+          backendErrors[key] = Array.isArray(
+            error.response.data[key]
+          )
+            ? error.response.data[key][0]
+            : error.response.data[key];
+
+        });
+
+      }
+
+      setErrors(backendErrors);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
 
   return (
   <AuthLayout
@@ -114,16 +235,20 @@ export default function Register() {
     <form
       onSubmit={handleSubmit}
       className="space-y-5"
+      noValidate
     >
+
       {/* First Name & Last Name */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
         <InputField
           label="First Name"
           name="first_name"
           value={formData.first_name}
           onChange={handleChange}
           placeholder="John"
-          // required
+          required
           error={errors.first_name}
         />
 
@@ -133,23 +258,26 @@ export default function Register() {
           value={formData.last_name}
           onChange={handleChange}
           placeholder="Doe"
-          // required
+          required
           error={errors.last_name}
         />
+
       </div>
 
       {/* Username */}
+
       <InputField
         label="Username"
         name="username"
         value={formData.username}
         onChange={handleChange}
         placeholder="john_doe"
-        // required
+        required
         error={errors.username}
       />
 
       {/* Email */}
+
       <InputField
         label="Email"
         type="email"
@@ -157,22 +285,25 @@ export default function Register() {
         value={formData.email}
         onChange={handleChange}
         placeholder="john@example.com"
-        // required
+        required
         error={errors.email}
       />
 
       {/* Phone */}
+
       <InputField
-        label="Phone Number"
-        name="phone_number"
-        value={formData.phone_number}
-        onChange={handleChange}
-        placeholder="phone number"
-        // required
-        error={errors.phone_number}
-      />
+  label="Phone Number"
+  type="tel"
+  name="phone_number"
+  value={formData.phone_number}
+  onChange={handleChange}
+  placeholder="1234xxxxxx"
+  required
+  error={errors.phone_number}
+/>
 
       {/* DOB + Gender */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         <InputField
@@ -181,11 +312,12 @@ export default function Register() {
           name="date_of_birth"
           value={formData.date_of_birth}
           onChange={handleChange}
-          // required
+          required
           error={errors.date_of_birth}
         />
 
         <div>
+
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Gender
             <span className="text-red-500 ml-1">*</span>
@@ -198,8 +330,8 @@ export default function Register() {
             className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-white
             ${
               errors.gender
-                ? "border-red-400 focus:ring-red-400"
-                : "border-gray-300 focus:ring-pink-500"
+                ? "border-red-400 focus:ring-red-400 focus:border-red-400"
+                : "border-gray-300 focus:ring-pink-500 focus:border-pink-500"
             }
             focus:outline-none focus:ring-2`}
           >
@@ -214,40 +346,98 @@ export default function Register() {
               {errors.gender}
             </p>
           )}
+
         </div>
 
       </div>
 
       {/* Address */}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-        <InputField
-          label="City"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          placeholder="Nagpur"
-        />
+  {/* Country */}
 
-        <InputField
-          label="State"
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
-          placeholder="Maharashtra"
-        />
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Country
+    </label>
 
-        <InputField
-          label="Country"
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-          placeholder="India"
-        />
+    <select
+      name="country"
+      value={formData.country}
+      onChange={handleChange}
+      className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+    >
+      <option value="">Select Country</option>
 
-      </div>
+      {countries.map((country) => (
+        <option
+          key={country.isoCode}
+          value={country.isoCode}
+        >
+          {country.name}
+        </option>
+      ))}
+    </select>
+  </div>
 
+  {/* State */}
+
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      State
+    </label>
+
+    <select
+      name="state"
+      value={formData.state}
+      onChange={handleChange}
+      disabled={!formData.country}
+      className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm bg-white disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-500"
+    >
+      <option value="">Select State</option>
+
+      {states.map((state) => (
+        <option
+          key={state.isoCode}
+          value={state.isoCode}
+        >
+          {state.name}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  {/* City */}
+
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      City
+    </label>
+
+    <select
+      name="city"
+      value={formData.city}
+      onChange={handleChange}
+      disabled={!formData.state}
+      className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm bg-white disabled:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-pink-500"
+    >
+      <option value="">Select City</option>
+
+      {cities.map((city) => (
+        <option
+          key={city.name}
+          value={city.name}
+        >
+          {city.name}
+        </option>
+      ))}
+    </select>
+  </div>
+
+</div>
       {/* Password */}
+
       <InputField
         label="Password"
         type="password"
@@ -255,29 +445,32 @@ export default function Register() {
         value={formData.password}
         onChange={handleChange}
         placeholder="Minimum 8 characters"
-        // required
+        required
         error={errors.password}
       />
 
       {/* Confirm Password */}
+
       <InputField
         label="Confirm Password"
         type="password"
         name="confirm_password"
         value={formData.confirm_password}
         onChange={handleChange}
-        placeholder="Re-enter password"
-        // required
+        placeholder="Re-enter your password"
+        required
         error={errors.confirm_password}
       />
 
       <Button
         type="submit"
-        text="Create Account"
+        text={loading ? "Creating Account..." : "Create Account"}
+        disabled={loading}
       />
+
     </form>
 
-    <p className="text-center mt-8 text-gray-600 text-sm">
+    <p className="text-center mt-8 text-sm text-gray-600">
       Already have an account?{" "}
       <Link
         to="/"
